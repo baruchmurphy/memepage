@@ -1,0 +1,6 @@
+.cardContainer {
+    overflow: scroll;
+}
+.cardContainer::-webkit-scrollbar {
+    display: none;
+}
