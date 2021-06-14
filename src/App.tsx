@@ -1,6 +1,5 @@
 import React from 'react';
 import './App.css';
-import Home from './main/index'
 import Routes from './routes';
 import { AuthProvider } from '../src/contexts/AuthContext';
 import { BrowserRouter as Router } from "react-router-dom";

@@ -13,34 +13,29 @@ import {
         List,
         createStyles,
         Toolbar,
-        Avatar,
-        Menu
+        Button
     } from '@material-ui/core';
-import { Star } from '@material-ui/icons'
 import { Link, useHistory } from "react-router-dom";
-import  ChevronLeftIcon  from '@material-ui/icons/ChevronLeft';
+import ChevronLeftIcon  from '@material-ui/icons/ChevronLeft';
 import MenuIcon from '@material-ui/icons/Menu';
-import { MemeCard } from '../components/MemeCard';
 import Skeleton from 'react-loading-skeleton';
 import './style.css'
+import Favorites from '../../Pages/favorites/Favorites';
+import NotFound from '../../components/notfound';
+import FeaturedMemes from '../../components/FeaturedMemes';
+import { useAuth } from '../../contexts/AuthContext'
 
 const drawerWidth = 240;
 
 const useStyles = makeStyles ((theme: any) =>
     createStyles({
-        appbar: {
-            height: '3rem',
-            textAlign: 'center',
-            position: 'relative',
-            marginBottom: '3rem',
-            display: 'inline-flex',
-            transition: theme.transitions.create(['margin', 'width'], {
-                easing: theme.transitions.easing.sharp,
-                duration: theme.transitions.duration.leavingScreen,
-            }),
-        },
         wrapper: {
             font: '18px/24px proximanova,arial,tahoma,sans-serif',
+        },
+        appBar: {
+            height: '3rem',
+            marginBottom: '3rem',
+            display: 'inline-flex'
         },
         drawer: {
             width: drawerWidth,
@@ -55,6 +50,7 @@ const useStyles = makeStyles ((theme: any) =>
         },
         drawerPaper: {
             width: drawerWidth,
+            backgroundColor: 'grey'
         },
         content: {
             flexGrow: 1,
@@ -66,23 +62,33 @@ const useStyles = makeStyles ((theme: any) =>
             marginLeft: -drawerWidth,
         },
         menuButton: {
-            marginRight: theme.spacing(2),
+            marginLeft: '.5rem',
             justifyContent: 'flex-start',
         },
-        title: {
-            flexGrow: 1,
+        logOut: {
+            margin: '5px',
+            width: '8rem',
+            height: '2.5rem'
         },
+        toolbar: {
+            border: '2px solid white',
+            height: '2rem'
+        },
+        appBarBox: {
+            display: 'inline-flex'
+        }
     })
 );
 
 
 const Home = () => {
+    const { profile, logout } = useAuth();
     const classes = useStyles();
     const history = useHistory();
-    const [anchorEl, setAnchorEl] = useState<any>(null);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [loading, setLoading] = useState(true);
     const [memeData, setMemeData] = useState();
+    const [content, setContent] = useState<any>(null);
 
     const getMemeData = async() => {
         try {
@@ -90,6 +96,7 @@ const Home = () => {
             .then((response: any) => {
                 setMemeData(response.data.data.memes)
             })
+            setLoading(false)
         } catch (error) {
             console.log(error)
         } finally {
@@ -103,32 +110,55 @@ const Home = () => {
             getMemeData()
         }
         setLoading(false);
-        // console.log(memeData)
     },[memeData])
 
+    useEffect(() => {
+        if(memeData) {
+            console.log(content)
+            switch(history.location.pathname) {
+                case '/home/favorites':
+                    setContent(<Favorites />)
+                    break;
+                case '/home':
+                    setContent(<FeaturedMemes memeData={memeData}/>)
+                    break; 
+                default: 
+                    setContent(<NotFound/>)
+                    setLoading(false)
+            }
+        }
+    },[history.location.pathname, memeData])
+
+    console.log('home =====>', profile)
+
     const drawerItems = [
+        {
+            name: 'Featured',
+            to: '/home'
+        },
         {
             name: 'Favorites',
             to: '/home/favorites'
         },
     ];
 
-    const handleClick = (event: any) => {
-        setAnchorEl(event.currentTarget)
-    };
+    // const handleClick = (event: any) => {
+    //     setAnchorEl(event.currentTarget)
+    // };
 
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
+    // const handleClose = () => {
+    //     setAnchorEl(null);
+    // };
 
     const renderDrawerList = () => {
         return drawerItems.map(item => {
             return (
                 <div onClick={() => setDrawerOpen(false)} key={item.name}>
-                    <Link to={item.to} style={{ textDecoration: 'none' }}>
+                    <Link to={item.to} style={{ textUnderlinePosition:'from-font', color:'#ffcc00' }}>
                         <ListItem button>
-                            <ListItemText primary={item.name} />
+                            <ListItemText color='#ffcc00' primary={item.name} />
                         </ListItem>
+                        <Divider />
                     </Link>
                 </div>
             );
@@ -145,8 +175,8 @@ const Home = () => {
         </Box>
         :
         <Box className={classes.wrapper}>
-            <AppBar color='secondary' className={classes.appbar}>
-                <Toolbar>
+            <AppBar color='secondary' position='static' className={classes.appBar}>
+                <Box className={classes.appBarBox}>
                     <IconButton 
                         edge="start" 
                         className={classes.menuButton} 
@@ -156,45 +186,34 @@ const Home = () => {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Typography color='primary' variant="h4" className={classes.title}>
-                        UMeme
-                    </Typography>
-                </Toolbar>
-                <Drawer
-                    className={classes.drawer}
-                    variant="persistent"
-                    anchor="left"
-                    open={drawerOpen}
-                    classes={{
-                        paper: classes.drawerPaper
-                    }}
-                >
-                    <Box className={classes.drawerHeader}>
-                        <IconButton onClick={() => setDrawerOpen(false)} >
-                            <ChevronLeftIcon />
-                        </IconButton>
+                    <Box paddingTop='5px' display='flex' width='100%' height='3rem' justifyContent='center'>
+                            <Typography color='primary' variant="h4">
+                                UMeme
+                            </Typography>
                     </Box>
-                    <Divider />
-                    <List>
-                        {renderDrawerList()}
-                    </List>
-                    <Divider />
-                </Drawer>
+                    <Drawer
+                        className={classes.drawer}
+                        variant="persistent"
+                        anchor="left"
+                        open={drawerOpen}
+                        classes={{
+                            paper: classes.drawerPaper
+                        }}
+                    >
+                        <Box className={classes.drawerHeader}>
+                            <IconButton onClick={() => setDrawerOpen(false)} >
+                                <ChevronLeftIcon />
+                            </IconButton>
+                        </Box>
+                        <Divider />
+                        <List>
+                            {renderDrawerList()}
+                        </List>
+                    </Drawer>
+                    <Button variant='contained' className={classes.logOut} color='primary' onClick={() => logout()} >Log Out</Button>
+                </Box>
             </AppBar>
-            <Box width='100%' display='flex'>
-                <Box marginRight='5rem' height='50rem' width='15rem' alignItems='center'>
-                    <Typography variant='h5' color='primary'><Star className='star'/>Featured</Typography>
-                    <Divider light={true} />
-                    <Typography variant='h6' color='primary'>Favorites</Typography>
-                </Box>
-                <Box width='46.1rem' height='50rem' className='cardContainer' borderRadius='5px' >
-                    {memeData && 
-                        <MemeCard
-                            memeData={memeData}
-                        />
-                    }
-                </Box>
-            </Box>
+            <main>{content}</main>
         </Box>
     )
 }

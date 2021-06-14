@@ -1,6 +1,6 @@
 import React from 'react'
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Image from './images.png';
+import Image from './cover6.jpg';
 import { styled, Box } from "@material-ui/core";
 
 const LoadingScreen = () => {
@@ -19,7 +19,7 @@ const LoadingScreen = () => {
         <LoadingContainer>
             <Box>
                 <Box paddingBottom="5rem">
-                    <img src={Image} />
+                    <img alt='loading screen' src={Image} />
                 </Box>
                 <Box>
                     <CircularProgress />
