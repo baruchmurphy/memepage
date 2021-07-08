@@ -1,7 +1,7 @@
 import react from 'react'
 import { Box, Divider, Typography } from '@material-ui/core'
 import { Star } from '@material-ui/icons'
-import { MemeCard } from '../memecard/MemeCard'
+import MemeCard from '../memecard/MemeCard'
 import { useAuth } from '../../contexts/AuthContext'
 
 const FeaturedMemes = ({memeData}: {memeData: any}) => {

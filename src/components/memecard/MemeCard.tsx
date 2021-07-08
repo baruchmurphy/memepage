@@ -1,4 +1,4 @@
-import react, { useState, useEffect, useCallback } from 'react'
+import react, { useState, useEffect } from 'react'
 import { 
         Box, 
         Button, 
@@ -7,7 +7,6 @@ import {
         Typography 
     } from '@material-ui/core'
 import { useAuth } from '../../contexts/AuthContext'
-import Skeleton from 'react-loading-skeleton'
 
 const useStyles = makeStyles ({
     Card: {
@@ -34,7 +33,7 @@ const useStyles = makeStyles ({
 })
 
 
-export const MemeCard = (props: any) => {
+const MemeCard = (props: any) => {
     const classes = useStyles();
     const [loading, setLoading] = useState(true);
     const { profile, updateFavorites } = useAuth();
@@ -77,3 +76,5 @@ export const MemeCard = (props: any) => {
         </Box>
     )
 }
+
+export default MemeCard
