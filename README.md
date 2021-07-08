@@ -1,1 +1,1 @@
-This Project includes an image API as a substitute for what would eventually be a meme database, it includes firebase multi-user authentication as well as the ability for users to save favorited memes to their personal accounts 
+This Project includes an image API as a substitute for what would eventually be a meme database, it includes firebase multi-user authentication as well as the ability for users to save favorited memes to their personal accounts. It uses the react router dom so that it can have multiple pages within the same state. 
